@@ -45,11 +45,13 @@ module Paypal
         Response.new response
       end
 
-      def checkout!(token, payer_id, payment_requests)
+      def checkout!(token, payer_id, payment_requests, button_source=nil)
         params = {
           :TOKEN => token,
           :PAYERID => payer_id
         }
+        params.merge!({ :BUTTONSOURCE => button_source }) if button_source
+
         Array(payment_requests).each_with_index do |payment_request, index|
           params.merge! payment_request.to_params(index)
         end

@@ -364,6 +364,24 @@ describe Paypal::Express::Request do
         response.items.count.should == 20
       end
     end
+
+    context 'with button_source specified' do
+      it 'should include the BUTTONSOURCE in the request params' do
+        expect do
+          instance.checkout! 'token', 'payer_id', instant_payment_request, 'button_source_id'
+        end.to request_to nvp_endpoint, :post
+        instance._method_.should == :DoExpressCheckoutPayment
+        instance._sent_params_.should == {
+          :PAYERID => 'payer_id',
+          :TOKEN => 'token',
+          :BUTTONSOURCE => 'button_source_id',
+          :PAYMENTREQUEST_0_DESC => 'Instant Payment Request',
+          :PAYMENTREQUEST_0_AMT => '1000.00',
+          :PAYMENTREQUEST_0_TAXAMT => "0.00",
+          :PAYMENTREQUEST_0_SHIPPINGAMT => "0.00"
+        }
+      end
+    end
   end
 
   describe '#subscribe!' do
